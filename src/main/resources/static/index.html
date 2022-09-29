@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>File explorer</title>
+</head>
+<body>
+<section>
+    <label>Directory</label>
+    <input type="text" id="dir-input" />
+    <button onclick="search()">GO</button>
+</section>
+<hr />
+<div id="error-content"></div>
+<div id="directory"></div>
+<script src="wsclient.js" type="application/javascript"></script>
+<script>
+    const wsClient = new WSclient({
+        onmessage,
+        onopen,
+        onclose,
+        path: 'explorer'
+    });
+    function onselectFile(filename, path){
+        console.log('clicked on '+filename);
+    }
+    function onselectDir(filename, path){
+        console.log('clicked on dir'+path);
+        go(path);
+    }
+
+    function listDir(files){
+        const dirout = document.getElementById('directory');
+        dirout.innerHTML = '';
+        console.log('receiving',files);
+        dirout.append(addfile('..', '..', true));
+        for(let file of files){
+            console.log(file);
+            dirout.append(addfile(file.name, file.path, file.isDirectory));
+        }
+    }
+    function addfile(filename, path , isdir){
+        const div = document.createElement('div');
+        div.innerText = filename;
+        const className = 'file-item';
+        div.title = path;
+        if(isdir){
+            div.setAttribute('class', `${className} directory`);
+            div.addEventListener('click', function (event){
+               go(path);
+            });
+
+            return div;
+        }
+        if(filename.endsWith(".mp4")){
+            const videoLink = document.createElement("a");
+            const encodedpath = btoa(path);
+            videoLink.target = "_blank";
+            videoLink.href = "http://localhost:8080/video/"+encodedpath;
+            videoLink.innerText = "Play";
+            div.append(videoLink);
+        }
+
+        div.setAttribute('class', `${className} file`);
+        div.addEventListener('click', function (event){
+            onselectFile(filename,path);
+        });
+        return div;
+    }
+    function onmessage(event){
+        const response = event.detail.data;
+        console.log('response', response);
+        const errorDiv = document.getElementById("error-content");
+        if(!response.success){
+            errorDiv.innerText = response.message;
+            errorDiv.setAttribute("style", "display: visible;");
+            return;
+        }
+        errorDiv.setAttribute("style", "display: none;");
+        if("list-dir" === response.responseType){
+          listDir(response.data);
+        }
+    }
+    function search(){
+        go(document.getElementById('dir-input').value);
+    }
+
+    function go(path){
+        document.getElementById('dir-input').value = path;
+        wsClient.sendMessage({
+            command: 'list-dir',
+            path
+        });
+    }
+    function onopen(event){
+        go('./');
+    }
+
+    function onclose(){
+        wsClient.reconnect();
+    }
+
+
+</script>
+</body>
+</html>
