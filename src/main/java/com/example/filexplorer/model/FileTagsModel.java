@@ -15,10 +15,10 @@ public class FileTagsModel implements Serializable {
     private String fileuuid;
 
     @Id
-    @Column
-    private String filepropertyname;
+    @Column(name = "property_name")
+    private String name;
 
-    @Column(name = "value")
+    @Column(name = "property_value")
     private String value;
 
     @Column(name = "type")
@@ -26,7 +26,7 @@ public class FileTagsModel implements Serializable {
 
     public FileTagsModel(FileTagsPK fileTagsPK, String value, String type) {
         this.fileuuid = fileTagsPK.getFileuuid();
-        this.filepropertyname = fileTagsPK.getFilepropertyname();
+        this.name = fileTagsPK.getName();
         this.value = value;
         this.type = type;
     }
@@ -34,7 +34,7 @@ public class FileTagsModel implements Serializable {
 
     public FileTagsModel(String fileuuid, String key, String value, String type) {
         this.fileuuid = fileuuid;
-        this.filepropertyname = key;
+        this.name = key;
         this.value = value;
         this.type = type;
     }
@@ -47,12 +47,12 @@ public class FileTagsModel implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         FileTagsModel that = (FileTagsModel) o;
-        return Objects.equals(fileuuid, that.fileuuid) && Objects.equals(filepropertyname, that.filepropertyname);
+        return Objects.equals(fileuuid, that.fileuuid) && Objects.equals(name, that.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(fileuuid, filepropertyname);
+        return Objects.hash(fileuuid, name);
     }
 
     public String getFileuuid() {
@@ -63,12 +63,12 @@ public class FileTagsModel implements Serializable {
         this.fileuuid = fileuuid;
     }
 
-    public String getFilepropertyname() {
-        return filepropertyname;
+    public String getName() {
+        return name;
     }
 
-    public void setFilepropertyname(String filepropertyname) {
-        this.filepropertyname = filepropertyname;
+    public void setName(String filepropertyname) {
+        this.name = filepropertyname;
     }
 
     public String getValue() {

@@ -12,15 +12,15 @@ public class FileTagsPK implements Serializable {
     private String  fileuuid;
 
     @Id
-    @Column
-    private String filepropertyname;
+    @Column(name = "property_name")
+    private String name;
 
     public FileTagsPK() {
     }
 
     public FileTagsPK(String fileuuid, String key) {
         this.fileuuid = fileuuid;
-        this.filepropertyname = key;
+        this.name = key;
     }
 
     public String getFileuuid() {
@@ -31,12 +31,12 @@ public class FileTagsPK implements Serializable {
         this.fileuuid = fileuuid;
     }
 
-    public String getFilepropertyname() {
-        return filepropertyname;
+    public String getName() {
+        return name;
     }
 
-    public void setFilepropertyname(String filepropertyname) {
-        this.filepropertyname = filepropertyname;
+    public void setName(String filepropertyname) {
+        this.name = filepropertyname;
     }
 
     @Override
@@ -44,12 +44,12 @@ public class FileTagsPK implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         FileTagsPK that = (FileTagsPK) o;
-        return Objects.equals(fileuuid, that.fileuuid) && Objects.equals(filepropertyname, that.filepropertyname);
+        return Objects.equals(fileuuid, that.fileuuid) && Objects.equals(name, that.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(fileuuid, filepropertyname);
+        return Objects.hash(fileuuid, name);
     }
 }
 

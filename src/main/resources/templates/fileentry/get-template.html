@@ -1,0 +1,17 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: head(title=${title})">
+</head>
+<body>
+<div th:replace="fragments/header :: header"> </div>
+<th:block th:replace="fragments/header :: breadcumb (breadlist=${breadlist})"></th:block>
+<div class="file-entry center">
+    <!--/*@thymesVar id="fileentry" type="com.example.filexplorer.dto.FileEntryDto"*/-->
+    <div class="list" th:each="field : ${fileentry.tags}">
+        <div class="list-label" th:text="${field.name}">FileUUID:</div>
+        <div th:text="${field.value}" class="list-item"></div>
+    </div>
+</div>
+<th:block th:replace="fragments/header :: scripts"></th:block>
+</body>
+</html>

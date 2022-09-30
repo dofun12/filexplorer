@@ -1,23 +1,20 @@
 package com.example.filexplorer.service;
 
 import com.example.filexplorer.FileUtils;
+import com.example.filexplorer.dto.FileEntryDto;
+import com.example.filexplorer.dto.FileEntryTagDto;
 import com.example.filexplorer.model.FileRegisterModel;
 import com.example.filexplorer.model.FileTagsModel;
 import com.example.filexplorer.model.FileTagsPK;
-import com.example.filexplorer.model.HistoryModel;
 import com.example.filexplorer.repository.FileRegisterRepository;
 import com.example.filexplorer.repository.FilesTagsRepository;
-import com.example.filexplorer.repository.HistoryRepository;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -32,8 +29,43 @@ public class FileRegisterService {
         this.fileRegisterRepository = fileRegisterRepository;
     }
 
+    public List<FileEntryDto> listEntrys(){
+        return listEntrys(null);
+    }
+
+    public List<FileEntryDto> listEntrys(String fileuuid){
+        List<FileEntryDto> entryDtoList = new ArrayList<>();
+        List<FileRegisterModel> registers = null;
+        if(fileuuid!=null){
+            registers = new ArrayList<>(1);
+            registers.add(fileRegisterRepository.findById(fileuuid).orElse(null));
+        }
+        if(registers == null){
+            registers = fileRegisterRepository.findAll();
+        }
+
+        for(FileRegisterModel register: registers){
+            if(register == null){
+                continue;
+            }
+            List<FileTagsModel> tagsModels = filesTagsRepository.findByFileuuid(register.getFileuuid());
+            if(tagsModels.isEmpty()){
+                continue;
+            }
+            FileEntryDto entryDto = new FileEntryDto();
+            entryDto.setPathencoded(register.getPathEncoded());
+            entryDto.setFileuuid(register.getFileuuid());
+            for(FileTagsModel tagModel: tagsModels) {
+                if(tagModel==null) continue;
+                entryDto.addTag(new FileEntryTagDto(tagModel));
+            }
+            entryDtoList.add(entryDto);
+        }
+        return entryDtoList;
+    }
+
     public void saveTag(String fileuuid, String key, Object value, String type){
-        Optional<FileTagsModel> ftm = filesTagsRepository.findByPk(fileuuid, key);
+        Optional<FileTagsModel> ftm = filesTagsRepository.findById(new FileTagsPK(fileuuid,key));
         if(ftm.isPresent()){
             return;
         }
@@ -77,15 +109,9 @@ public class FileRegisterService {
     }
 
     private static String getMD5SumJava(File file){
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            return null;
-        }
         try (InputStream is = Files.newInputStream(Paths.get(file.getAbsolutePath()))){
             return org.apache.commons.codec.digest.DigestUtils.md5Hex(is);
-        } catch (IOException e) {
+        } catch (Exception e ) {
             e.printStackTrace();
         }
         return null;

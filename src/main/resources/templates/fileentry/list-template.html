@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: head(title=${title})">
+</head>
+<body>
+<div th:replace="fragments/header :: header"> </div>
+<th:block th:replace="fragments/header :: breadcumb (breadlist=${breadlist})"></th:block>
+<div class="file-container" th:with="items='filename,path'">
+    <!--/*@thymesVar id="fileentrylist" type="java.util.List<com.example.filexplorer.dto.FileEntryDto>"*/-->
+    <div class="file-entry" th:each="ftx,iterStat  : ${fileentrylist}" th:classappend="${iterStat.odd}? 'odd' : 'even'">
+        <div class="list">
+            <!--/*@thymesVar id="fileentrylist" type="com.example.filexplorer.dto.FileEntryDto"*/-->
+            <div class="list-label">FileUUID: </div>
+            <div th:text="${ftx.fileuuid}" class="list-item"></div>
+        </div>
+        <div class="list">
+            <div class="list-label">Pathencoded: </div>
+            <div th:text="${ftx.pathencoded}" class="list-item"></div>
+        </div>
+
+        <div class="list" th:each="field : ${ftx.getTags(#strings.arraySplit(items, ','))}">
+            <div class="list-label"  th:text="${field.name}">FileUUID: </div>
+            <div th:text="${field.value}" class="list-item"></div>
+        </div>
+        <div class="list">
+            <div class="list-item"><a th:href="'/fileregistry/'+${ftx.fileuuid}"> Show details</a></div>
+        </div>
+    </div>
+
+</div>
+<th:block th:replace="fragments/header :: scripts"></th:block>
+</body>
+</html>
