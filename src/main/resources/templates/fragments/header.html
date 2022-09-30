@@ -6,7 +6,7 @@
     <title th:text="${title!=null}?${title}:'Fileexplorer'" ></title>
     <link rel="stylesheet" href="/style.css">
     <!-- CSS only -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+    <link  rel="stylesheet" href="/css/bootstrap.min.css">
 </head>
 <body>
     <div th:fragment="header">
@@ -15,7 +15,6 @@
     <th:block th:fragment="breadcumb">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/">Home</a></li>
                 <!--/*@thymesVar id="breadlist" type="java.util.List<example.filexplorer.dto.BreadDto>"*/-->
                 <th:block th:each="bread  : ${breadlist}" >
                     <li class="breadcrumb-item" th:attrappend="aria-current=${bread.active}? 'page' : ''" th:classappend="${bread.active}? 'active' : ''"><a th:text="${bread.name}" th:href="${bread.link}"></a></li>
@@ -24,7 +23,7 @@
         </nav>
     </th:block>
     <th:block th:fragment="scripts">
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8" crossorigin="anonymous"></script>
+        <script src="/js/bootstrap.bundle.min.js"></script>
     </th:block>
 </body>
 </html>
