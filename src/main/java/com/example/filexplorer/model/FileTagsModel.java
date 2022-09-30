@@ -18,6 +18,7 @@ public class FileTagsModel implements Serializable {
     @Column(name = "property_name")
     private String name;
 
+    @Lob
     @Column(name = "property_value")
     private String value;
 

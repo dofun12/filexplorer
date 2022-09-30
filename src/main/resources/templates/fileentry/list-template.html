@@ -23,7 +23,10 @@
             <div th:text="${field.value}" class="list-item"></div>
         </div>
         <div class="list">
-            <div class="list-item"><a th:href="'/fileregistry/'+${ftx.fileuuid}"> Show details</a></div>
+            <div class="list-item"><a th:href="'/fileregistry/details/'+${ftx.fileuuid}"> Show details</a></div>
+        </div>
+        <div class="list" th:if="${ftx.parentFileuuid==null}">
+            <div class="list-item"><a th:href="'/fileregistry/list/'+${ftx.fileuuid}">Get files</a></div>
         </div>
     </div>
 

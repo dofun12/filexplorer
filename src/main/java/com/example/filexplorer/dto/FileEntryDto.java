@@ -6,14 +6,24 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class FileEntryDto {
+    private String name;
     private String fileuuid;
     private String pathencoded;
+    private String parentFileuuid;
     private List<FileEntryTagDto> tags;
 
     public FileEntryTagDto getTag(final String name) {
         if (tags == null) return FileEntryTagDto.empty;
         Optional<FileEntryTagDto> optTagDto = tags.stream().filter(fileEntryTagDto -> Objects.equals(fileEntryTagDto.getName(), name)).findFirst();
         return optTagDto.orElse(FileEntryTagDto.empty);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public List<FileEntryTagDto> getTags(String[] fields) {
@@ -23,6 +33,14 @@ public class FileEntryDto {
     }
 
     public FileEntryDto() {
+    }
+
+    public String getParentFileuuid() {
+        return parentFileuuid;
+    }
+
+    public void setParentFileuuid(String parentFileuuid) {
+        this.parentFileuuid = parentFileuuid;
     }
 
     public FileEntryDto(String fileuuid, String pathencoded) {

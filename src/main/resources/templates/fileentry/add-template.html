@@ -6,14 +6,11 @@
 <th:block th:replace="fragments/header :: breadcumb (breadlist=${breadlist})"></th:block>
 <!-- content -->
 <div class="container-fluid">
-    <div class="row">
-        <div class="d-grid gap-2">
-            <a href="/fileregistry/add" class="btn btn-primary" tabindex="-1" role="button" aria-disabled="true">Novo</a>
-        </div>
-        <div class="d-grid gap-2">
-            <a href="/fileregistry/list" class="btn btn-primary" tabindex="-1" role="button" aria-disabled="true">Listar Arquivos</a>
-        </div>
-    </div>
+    <!--/*@thymesVar id="directoryDto" type="com.example.filexplorer.dto.DirectoryDto"*/-->
+    <form action="#" th:action="@{/fileregistry/add}" th:object="${directoryDto}" method="post">
+        <p>Path: <input type="text" th:field="*{path}" /></p>
+        <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
+    </form>
 </div>
 
 <th:block th:replace="fragments/header :: scripts"></th:block>

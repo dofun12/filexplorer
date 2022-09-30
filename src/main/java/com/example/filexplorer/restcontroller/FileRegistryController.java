@@ -32,6 +32,6 @@ public class FileRegistryController {
 
     @GetMapping(value = "/{fileuuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public FileEntryDto getFileEntry(@PathVariable("fileuuid") String fileuuid){
-        return fileRegisterService.listEntrys(fileuuid).get(0);
+        return fileRegisterService.listEntrys(fileuuid, false).get(0);
     }
 }

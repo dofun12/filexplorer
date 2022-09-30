@@ -1,0 +1,14 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: head(title=${title})"></head>
+<body>
+<div th:replace="fragments/header :: header"> </div>
+<th:block th:replace="fragments/header :: breadcumb (breadlist=${breadlist})"></th:block>
+<!-- content -->
+<div class="container-fluid" th:text="${postMessage}">
+
+</div>
+
+<th:block th:replace="fragments/header :: scripts"></th:block>
+</body>
+</html>
