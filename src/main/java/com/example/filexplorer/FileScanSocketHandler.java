@@ -1,8 +1,10 @@
 package com.example.filexplorer;
 
+import com.example.filexplorer.dto.FileEntryDto;
 import com.example.filexplorer.dto.FilePathRequestDto;
 import com.example.filexplorer.dto.FilePathResponseDto;
 import com.example.filexplorer.dto.ServerResponseDto;
+import com.example.filexplorer.service.FileRegisterService;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
@@ -14,21 +16,19 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
 public class FileScanSocketHandler extends TextWebSocketHandler {
 
-
+    final FileRegisterService fileRegisterService;
     final Gson gson = new Gson();
     HashMap<String, WebSocketSession> sessions = new HashMap<>();
 
-    public FileScanSocketHandler() {
 
+    public FileScanSocketHandler(FileRegisterService fileRegisterService) {
+        this.fileRegisterService = fileRegisterService;
     }
 
     @Override
@@ -94,6 +94,18 @@ public class FileScanSocketHandler extends TextWebSocketHandler {
                         "list-dir"
                 );
                 sendJson(session, responseDto);
+                return;
+            }
+            if ("scan".equals(commandElement.get("command").getAsString()) && !commandElement.get("fileuuid").isJsonNull()) {
+                final String fileuuid = commandElement.get("fileuuid").getAsString();
+                FileEntryDto entryDto = fileRegisterService.getFileEntry(fileuuid, Optional.empty());
+                FileUtils.getFilesRecursive(FileRegisterService.getFileFromEncodedPath(entryDto.getPathencoded()), new OnFileFounded() {
+                    @Override
+                    public void founded(File founded) {
+                        final FileEntryDto fileEntry  = fileRegisterService.registerFile(fileuuid, founded);
+                        sendJson(session, fileEntry);
+                    }
+                });
                 return;
             }
         } catch (JsonSyntaxException je) {

@@ -3,23 +3,23 @@
 <head th:replace="fragments/header :: head(title=${title})">
 </head>
 <body>
-<div th:replace="fragments/header :: header"> </div>
+<div th:replace="fragments/header :: header"></div>
 <th:block th:replace="fragments/header :: breadcumb (breadlist=${breadlist})"></th:block>
 <div class="file-container" th:with="items='filename,path'">
     <!--/*@thymesVar id="fileentrylist" type="java.util.List<com.example.filexplorer.dto.FileEntryDto>"*/-->
     <div class="file-entry" th:each="ftx,iterStat  : ${fileentrylist}" th:classappend="${iterStat.odd}? 'odd' : 'even'">
         <div class="list">
             <!--/*@thymesVar id="fileentrylist" type="com.example.filexplorer.dto.FileEntryDto"*/-->
-            <div class="list-label">FileUUID: </div>
+            <div class="list-label">FileUUID:</div>
             <div th:text="${ftx.fileuuid}" class="list-item"></div>
         </div>
         <div class="list">
-            <div class="list-label">Pathencoded: </div>
+            <div class="list-label">Pathencoded:</div>
             <div th:text="${ftx.pathencoded}" class="list-item"></div>
         </div>
 
         <div class="list" th:each="field : ${ftx.getTags(#strings.arraySplit(items, ','))}">
-            <div class="list-label"  th:text="${field.name}">FileUUID: </div>
+            <div class="list-label" th:text="${field.name}">FileUUID:</div>
             <div th:text="${field.value}" class="list-item"></div>
         </div>
         <div class="list">
@@ -27,10 +27,54 @@
         </div>
         <div class="list" th:if="${ftx.parentFileuuid==null}">
             <div class="list-item"><a th:href="'/fileregistry/list/'+${ftx.fileuuid}">Get files</a></div>
+            <div class="list-item" th:attr="onclick=|scan('${ftx.fileuuid}')|">Scan</div>
+            <div class="output" id="output"><span>Items encontrados:</span><div class="badge" id="badge"></div></div>
         </div>
     </div>
 
 </div>
+<script src="/wsclient.js" type="application/javascript"></script>
+<script>
+    let totalObj = {}
+    const wsClient = new WSclient({
+        onmessage,
+        onopen,
+        onclose,
+        path: 'scan'
+    });
+
+    function onmessage(event) {
+        const response = event.detail.data;
+        console.log('response', response);
+        if(!totalObj[response.parentFileuuid]){
+            totalObj[response.parentFileuuid] = { total: 1}
+        }
+        let count = totalObj[response.parentFileuuid].total;
+        count = count +1;
+        document.getElementById("badge").innerText = count;
+        totalObj[response.parentFileuuid].total = count;
+
+    }
+
+
+    function scan(fileuuid) {
+        wsClient.sendMessage({
+            command: 'scan',
+            fileuuid
+        });
+    }
+
+    function onopen(event) {
+
+    }
+
+    function onclose() {
+        wsClient.reconnect();
+    }
+
+
+</script>
+
 <th:block th:replace="fragments/header :: scripts"></th:block>
 </body>
 </html>

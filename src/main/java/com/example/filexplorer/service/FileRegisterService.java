@@ -117,6 +117,15 @@ public class FileRegisterService {
         return readAllDir(directoryEncoded, false);
     }
 
+    public static File getFileFromEncodedPath(String encodedPath){
+        String path = new String(Base64.getDecoder().decode(encodedPath.getBytes()));
+        File dir = new File(path);
+        if (!dir.exists() || !dir.isDirectory()) {
+            return null;
+        }
+        return dir;
+    }
+
     public FileRegisterModel readAllDir(String directoryEncoded, boolean scan) {
         String path = new String(Base64.getDecoder().decode(directoryEncoded.getBytes()));
         File dir = new File(path);
@@ -149,7 +158,7 @@ public class FileRegisterService {
         return saved;
     }
 
-    public void registerFile(String diruuid, File file) {
+    public FileEntryDto registerFile(String diruuid, File file) {
         FileRegisterModel fileRegisterModel = new FileRegisterModel();
         String uuid = UUID.randomUUID().toString();
         fileRegisterModel.setFileuuid(uuid);
@@ -167,7 +176,7 @@ public class FileRegisterService {
         saveTag(uuid, "full-path", file.getAbsolutePath(), "text");
         saveTag(uuid, "path", file.getAbsolutePath(), "text");
         saveTag(uuid, "md5-sum", getMD5SumJava(file), "text");
-
+        return getFileEntry(null, Optional.of(fileRegisterModel));
 
     }
 

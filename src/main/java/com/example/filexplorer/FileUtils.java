@@ -14,6 +14,9 @@ public class FileUtils {
         return files;
     }
     public static ArrayList<File> getFilesRecursive(File dir){
+        return getFilesRecursive(dir,null);
+    }
+    public static ArrayList<File> getFilesRecursive(File dir, OnFileFounded onFileFounded){
         ArrayList<File> files = new ArrayList<>();
         if(dir==null ||dir.listFiles()==null){
             return files;
@@ -22,8 +25,13 @@ public class FileUtils {
             if(subFile.isDirectory()){
                 files.addAll(getFiles(subFile));
             }
+            if(onFileFounded!=null){
+                onFileFounded.founded(subFile);
+            }
+
             files.add(subFile);
         }
         return files;
     }
+
 }
