@@ -8,23 +8,19 @@
     width: 80%;
 }
 .list{
-    display: flex;
     padding: 10px;
 
 }
 .odd{
-    background-color: #efefef;
+    /*background-color: #efefef;*/
 }
 .even{
     background-color: #fff;
 }
 
 .list-label{
-    flex: 0 1 calc(15% - 10px);
+
 }
 .list-item{
-    flex-basis: auto;
-    flex-grow: 2;
-    text-align: left;
-    justify-content: left;
+    overflow-wrap: break-word;
 }

@@ -5,34 +5,52 @@
 <body>
 <div th:replace="fragments/header :: header"></div>
 <th:block th:replace="fragments/header :: breadcumb (breadlist=${breadlist})"></th:block>
-<div class="file-container" th:with="items='filename,path'">
-    <!--/*@thymesVar id="fileentrylist" type="java.util.List<com.example.filexplorer.dto.FileEntryDto>"*/-->
-    <div class="file-entry" th:each="ftx,iterStat  : ${fileentrylist}" th:classappend="${iterStat.odd}? 'odd' : 'even'">
-        <div class="list">
-            <!--/*@thymesVar id="fileentrylist" type="com.example.filexplorer.dto.FileEntryDto"*/-->
-            <div class="list-label">FileUUID:</div>
-            <div th:text="${ftx.fileuuid}" class="list-item"></div>
-        </div>
-        <div class="list">
-            <div class="list-label">Pathencoded:</div>
-            <div th:text="${ftx.pathencoded}" class="list-item"></div>
-        </div>
+<div class="container-fluid">
 
-        <div class="list" th:each="field : ${ftx.getTags(#strings.arraySplit(items, ','))}">
-            <div class="list-label" th:text="${field.name}">FileUUID:</div>
-            <div th:text="${field.value}" class="list-item"></div>
-        </div>
-        <div class="list">
-            <div class="list-item"><a th:href="'/fileregistry/details/'+${ftx.fileuuid}"> Show details</a></div>
-        </div>
-        <div class="list" th:if="${ftx.parentFileuuid==null}">
-            <div class="list-item"><a th:href="'/fileregistry/list/'+${ftx.fileuuid}">Get files</a></div>
-            <div class="list-item" th:attr="onclick=|scan('${ftx.fileuuid}')|">Scan</div>
-            <div class="output" id="output"><span>Items encontrados:</span><div class="badge" id="badge"></div></div>
+    <div class="row" th:with="items='filename,path'">
+        <div class="accordion col-12" th:id="'accordionExample'+${iterStat.index}" th:each="ftx,iterStat  : ${fileentrylist}" th:classappend="${iterStat.odd}? 'odd' : 'even'">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingOne">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" th:attr="data-bs-target=|#collapseOne${iterStat.index}|, aria-controls=|collapseOne${iterStat.index}|"  aria-expanded="true">
+                        <th:block th:text="${ftx.name}"></th:block>
+                    </button>
+                </h2>
+                <div th:id="'collapseOne'+${iterStat.index}" class="accordion-collapse collapse" aria-labelledby="headingOne" th:attr="data-bs-parent=|#accordionExample${iterStat.index}|">
+                    <div class="accordion-body">
+                        <div class="col-12 list">
+                            <!--/*@thymesVar id="fileentrylist" type="com.example.filexplorer.dto.FileEntryDto"*/-->
+                            <div class="col-12">FileUUID:</div>
+                            <div th:text="${ftx.fileuuid}" class="list-item"></div>
+                        </div>
+                        <div class="col-12 list">
+                            <div class="list-label">Pathencoded:</div>
+                            <div th:text="${ftx.pathencoded}" class="list-item"></div>
+                        </div>
+
+                        <div class="col-12 list" th:each="field : ${ftx.getTags(#strings.arraySplit(items, ','))}">
+                            <div class="list-label" th:text="${field.name}">FileUUID:</div>
+                            <div th:text="${field.value}" class="list-item"></div>
+                        </div>
+                        <div class="col-12 list">
+                            <div class="list-item"><a th:href="'/fileregistry/details/'+${ftx.fileuuid}"> Show details</a></div>
+                        </div>
+                        <div class="col-12 list" th:if="${ftx.parentFileuuid==null}">
+                            <div class="list-item"><a th:href="'/fileregistry/list/'+${ftx.fileuuid}">Get files</a></div>
+                        </div>
+                        <div class="col-12 list" th:if="${ftx.parentFileuuid==null}">
+                            <div class="col-12 list-item btn btn-info" th:attr="onclick=|scan('${ftx.fileuuid}')|">Scan</div>
+                            <div class="output" id="output"><span>Items encontrados:</span>
+                                <div class="badge" id="badge"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-
 </div>
+
+
 <script src="/wsclient.js" type="application/javascript"></script>
 <script>
     let totalObj = {}
@@ -43,14 +61,18 @@
         path: 'scan'
     });
 
+    function setTotalEntry() {
+
+    }
+
     function onmessage(event) {
         const response = event.detail.data;
         console.log('response', response);
-        if(!totalObj[response.parentFileuuid]){
-            totalObj[response.parentFileuuid] = { total: 1}
+        if (!totalObj[response.parentFileuuid]) {
+            totalObj[response.parentFileuuid] = {total: 1}
         }
         let count = totalObj[response.parentFileuuid].total;
-        count = count +1;
+        count = count + 1;
         document.getElementById("badge").innerText = count;
         totalObj[response.parentFileuuid].total = count;
 
